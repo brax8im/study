@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>الدراسة مع الأصدقاء</title>
+  <link href="https://fonts.googleapis.com/css2?family=Lalezar&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Lalezar', cursive;
+      background: linear-gradient(to bottom, #004e92, #000428);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 20px;
+    }
+    header {
+      background-color: #00509e;
+      width: 100%;
+      padding: 15px 0;
+      text-align: center;
+      color: #fff;
+      font-size: 2.5rem;
+      font-weight: bold;
+      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+    }
+    .container {
+      max-width: 600px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      padding: 20px;
+      border-radius: 15px;
+      margin-top: 20px;
+      box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.3);
+    }
+    input, select, button {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border-radius: 5px;
+      border: none;
+      font-size: 1rem;
+    }
+    button {
+      background-color: #00509e;
+      color: #fff;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.2s;
+    }
+    button:hover {
+      background-color: #57a0d3;
+      transform: scale(1.05);
+    }
+    .message {
+      margin-top: 10px;
+      font-size: 1rem;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <header>الدراسة مع الأصدقاء</header>
+
+  <div id="signupSection" class="container">
+    <h2>إنشاء حساب جديد</h2>
+    <input type="text" id="signupName" placeholder="اسم المستخدم" />
+    <select id="signupLevel">
+      <option value="أولى ثانوي">أولى ثانوي</option>
+      <option value="ثانية ثانوي">ثانية ثانوي</option>
+      <option value="ثالثة ثانوي">ثالثة ثانوي</option>
+    </select>
+    <select id="signupMajor">
+      <option value="علمي">علمي</option>
+      <option value="أدبي">أدبي</option>
+    </select>
+    <select id="signupSubMajor" style="display: none;">
+      <option value="علوم تجريبية">علوم تجريبية</option>
+      <option value="تسيير واقتصاد">تسيير واقتصاد</option>
+      <option value="رياضيات">رياضيات</option>
+      <option value="تقني رياضي">تقني رياضي</option>
+    </select>
+    <select id="signupAdabiMajor" style="display: none;">
+      <option value="آداب">آداب</option>
+      <option value="لغات">لغات</option>
+      <option value="فلسفة">فلسفة</option>
+    </select>
+    <select id="signupGender">
+      <option value="ذكر">ذكر</option>
+      <option value="أنثى">أنثى</option>
+    </select>
+    <input type="password" id="signupPassword" placeholder="كلمة المرور" />
+    <button onclick="register()">إنشاء الحساب</button>
+    <div id="signupMessage" class="message"></div>
+  </div>
+
+  <script>
+    // تغيير الاختيارات بناءً على الشعبة
+    document.getElementById('signupMajor').addEventListener('change', function() {
+      const major = this.value;
+      const subMajor = document.getElementById('signupSubMajor');
+      const adabiMajor = document.getElementById('signupAdabiMajor');
+      
+      if (major === 'علمي') {
+        subMajor.style.display = 'block';
+        adabiMajor.style.display = 'none';
+      } else if (major === 'أدبي') {
+        subMajor.style.display = 'none';
+        adabiMajor.style.display = 'block';
+      }
+    });
+
+    function register() {
+      const name = document.getElementById('signupName').value;
+      const level = document.getElementById('signupLevel').value;
+      const major = document.getElementById('signupMajor').value;
+      const subMajor = major === 'علمي' ? document.getElementById('signupSubMajor').value : '';
+      const adabiMajor = major === 'أدبي' ? document.getElementById('signupAdabiMajor').value : '';
+      const gender = document.getElementById('signupGender').value;
+      const password = document.getElementById('signupPassword').value;
+
+      // تحقق من صحة البيانات
+      const nameRegex = /^[a-zA-Z\u0600-\u06FF0-9_-\s]+$/;
+      const passwordRegex = /^[a-zA-Z\u0600-\u06FF0-9@#$%^&*]+$/;
+
+      if (!name.match(nameRegex)) {
+        displayMessage('signupMessage', 'الاسم يحتوي على رموز غير مسموحة.', 'error');
+        return;
+      }
+      if (!password.match(passwordRegex)) {
+        displayMessage('signupMessage', 'كلمة المرور تحتوي على رموز غير مسموحة.', 'error');
+        return;
+      }
+
+      // حفظ البيانات في localStorage
+      if (!localStorage.getItem(name)) {
+        const userData = { name, level, major, subMajor, adabiMajor, gender, password };
+        localStorage.setItem(name, JSON.stringify(userData));
+
+        // توجيه المستخدم إلى الصفحة الرئيسية
+        window.location.href = "homepage.html"; // تأكد من وجود ملف الصفحة الرئيسية
+      } else {
+        displayMessage('signupMessage', 'اسم المستخدم موجود بالفعل.', 'error');
+      }
+    }
+
+    function displayMessage(elementId, message, type) {
+      const element = document.getElementById(elementId);
+      element.textContent = message;
+      element.style.color = type === 'success' ? 'green' : 'red';
+    }
+  </script>
+</body>
+</html>
